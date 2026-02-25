@@ -147,7 +147,7 @@ export const getBlogById = async (req: Request, res: Response) => {
     //   });
     // }
 
-    const blog = await Blog.findById(id).populate("category");
+    const blog = await Blog.findById(id);
 
     if (!blog) {
       return res.status(404).json({

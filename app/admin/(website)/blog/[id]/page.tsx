@@ -19,7 +19,10 @@ const CreateBlog = () => {
   const isEditMode = blogId !== "create";
   const [categoryOptions, setCategoryOptions] = useState<CategoryType[]>([]);
   const [content, setContent] = useState("");
+  console.log(content, "content>>>>>>>>>>")
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [blog, setBlog] = useState<any>(null);
+  console.log(blog, "blog>>>>>")
 
   const [inputVal, setInputVal] = useState({
     postTitle: "",
@@ -105,7 +108,7 @@ const CreateBlog = () => {
       }
 
       if (isEditMode) {
-        await axios.put(`${BaseURL}/blog/${blogId}`, formData);
+        await axios.patch(`${BaseURL}/blog/update/${blogId}`, formData);
         alert("Blog Updated Successfully ✅");
       } else {
         await axios.post(`${BaseURL}/blog`, formData);
@@ -138,16 +141,15 @@ const CreateBlog = () => {
   const getSingleBlog = async () => {
     try {
       const res = await axios.get(`${BaseURL}/blog/${blogId}`);
-      console.log(res,"res>>>>>>>>>>>kjsd")
 
       if (res.status === 200) {
-        const blog = res.data;
-
+        const blogData = res?.data?.data;
+        setBlog(blogData)
         setInputVal({
-          postTitle: blog.postTitle,
-          slug: blog.slug,
-          category: blog.category,
-          seo: blog.seo || {
+          postTitle: blogData.postTitle,
+          slug: blogData.slug,
+          category: blogData.category,
+          seo: blogData.seo || {
             metaTitle: "",
             metaDescription: "",
             keywords: "",
@@ -155,7 +157,7 @@ const CreateBlog = () => {
           },
         });
 
-        setContent(blog.postDescription);
+        setContent(blogData.postDescription);
       }
     } catch (err) {
       console.log(err);
@@ -198,7 +200,11 @@ const CreateBlog = () => {
           </div>
         </div>
 
-        <ImageUpload onUpload={handleImageUpload} />
+        {/* <ImageUpload onUpload={handleImageUpload} /> */}
+        <ImageUpload
+          existingImage={blog?.image?.url}
+          onUpload={handleImageUpload}
+        />
       </div>
 
       <Editor content={content} setContent={setContent} />
