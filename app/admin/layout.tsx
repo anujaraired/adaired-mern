@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import "../globals.css";
 import Link from "next/link";
+import AdminAuthGuard from "./AdminAuthGuard";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -57,7 +58,9 @@ export default function AdminLayout({
 
           {/* ✅ Main Content */}
           <main className="ml-64 w-full p-6">
-            {children}
+            <AdminAuthGuard>
+              {children}
+            </AdminAuthGuard>
           </main>
 
         </div>

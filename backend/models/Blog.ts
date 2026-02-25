@@ -4,8 +4,7 @@ const blogSchema = new mongoose.Schema(
   {
     postTitle: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
-    // category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-    category: { type: String, },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     postDescription: { type: String },
 
     image: {

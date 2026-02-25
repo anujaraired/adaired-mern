@@ -3,6 +3,8 @@ import next from "next";
 import dotenv from "dotenv";
 import { connectDB } from "./backend/config/db";
 import blogRoutes from "./backend/routes/blogRoutes";
+import blogCategoryRoutes from './backend/routes/blogCategory.routes'
+import authRoutes from './backend/routes/auth.routes'
 
 dotenv.config();
 
@@ -18,7 +20,9 @@ app.prepare().then(async () => {
     server.use(express.json());
 
     // Backend API
+    server.use("/api/auth", authRoutes);
     server.use("/api/blog", blogRoutes);
+    server.use("/api/blog-category", blogCategoryRoutes);
 
     // Next.js handles frontend
     server.use((req, res) => {

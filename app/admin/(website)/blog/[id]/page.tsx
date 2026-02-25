@@ -7,13 +7,16 @@ import SelectField from "@/app/components/UI/SelectField";
 import ImageUpload from "@/app/components/UI/ImageUpload";
 import axios from "axios";
 import { BaseURL } from "@/app/baseUrl";
-
+import { useParams } from "next/navigation";
 interface CategoryType {
   label: string;
   value: string;
 }
 
 const CreateBlog = () => {
+  const params = useParams();
+  const blogId = params?.id;
+  const isEditMode = blogId !== "create";
   const [categoryOptions, setCategoryOptions] = useState<CategoryType[]>([]);
   const [content, setContent] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -95,22 +98,23 @@ const CreateBlog = () => {
       formData.append("slug", inputVal.slug);
       formData.append("category", inputVal.category);
       formData.append("postDescription", content);
-
-      // ✅ Send complete SEO object as JSON string
       formData.append("seo", JSON.stringify(inputVal.seo));
 
       if (selectedFile) {
         formData.append("image", selectedFile);
       }
 
-      await axios.post(`${BaseURL}/blog`, formData);
-
-      alert("Blog Created Successfully ✅");
+      if (isEditMode) {
+        await axios.put(`${BaseURL}/blog/${blogId}`, formData);
+        alert("Blog Updated Successfully ✅");
+      } else {
+        await axios.post(`${BaseURL}/blog`, formData);
+        alert("Blog Created Successfully ✅");
+      }
     } catch (err: any) {
       console.log(err.response?.data || err.message);
     }
   };
-
   /* =============================
      Fetch Categories
   ============================== */
@@ -120,8 +124,8 @@ const CreateBlog = () => {
 
       if (res.status === 200) {
         const formatted = res.data?.data?.map((item: any) => ({
-          label: item.name,
-          value: item._id,
+          label: item?.name,
+          value: item?._id,
         }));
 
         setCategoryOptions(formatted);
@@ -131,8 +135,37 @@ const CreateBlog = () => {
     }
   };
 
+  const getSingleBlog = async () => {
+    try {
+      const res = await axios.get(`${BaseURL}/blog/${blogId}`);
+      console.log(res,"res>>>>>>>>>>>kjsd")
+
+      if (res.status === 200) {
+        const blog = res.data;
+
+        setInputVal({
+          postTitle: blog.postTitle,
+          slug: blog.slug,
+          category: blog.category,
+          seo: blog.seo || {
+            metaTitle: "",
+            metaDescription: "",
+            keywords: "",
+            focusKeyword: "",
+          },
+        });
+
+        setContent(blog.postDescription);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     getCategories();
+    if (isEditMode) {
+      getSingleBlog();
+    }
   }, []);
 
   return (
