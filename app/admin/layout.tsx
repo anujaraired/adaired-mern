@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 const menuData = [
   { label: "Dashboard", path: "/admin" },
   { label: "Blog", path: "/admin/blog" },
+  { label: "Blog Category", path: "/admin/blog-category" },
 ];
 
 export default function AdminLayout({
@@ -21,8 +22,8 @@ export default function AdminLayout({
     <div className="min-h-screen bg-gray-50">
 
       {/* Header */}
-      <header className="fixed top-0 left-0 w-full h-16 bg-yellow-100 flex items-center px-6 z-50 shadow-sm">
-        <h2 className="text-lg font-semibold">Adaind Admin</h2>
+      <header className="fixed top-0 left-0 w-full h-16 bg-[#FB9100] flex items-center px-6 z-50 shadow-sm">
+        <h2 className="!text-white">Adaind Admin</h2>
       </header>
 
       <div className="flex pt-16">

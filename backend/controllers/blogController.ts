@@ -169,3 +169,42 @@ export const getBlogById = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+export const deleteBlog = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (Array.isArray(id) || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid blog ID",
+      });
+    }
+
+    const deletedBlog = await Blog.findByIdAndDelete(id);
+
+    if (!deletedBlog) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
+    }
+
+    // Delete Cloudinary image after DB delete
+    if (deletedBlog.image?.public_id) {
+      await cloudinary.uploader.destroy(deletedBlog.image.public_id);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Blog deleted successfully",
+    });
+
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
