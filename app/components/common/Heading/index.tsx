@@ -1,7 +1,8 @@
 //
 
 import Image, { StaticImageData } from 'next/image';
-import star from '../../../../public/assets/Vector.png';
+import React from 'react';
+import star from '../../../../public/assets/icons/star.png';
 
 export interface IHeading {
   subTitle?: String;
