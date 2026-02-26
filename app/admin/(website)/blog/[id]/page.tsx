@@ -7,22 +7,21 @@ import SelectField from "@/app/components/UI/SelectField";
 import ImageUpload from "@/app/components/UI/ImageUpload";
 import axios from "axios";
 import { BaseURL } from "@/app/baseUrl";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 interface CategoryType {
   label: string;
   value: string;
 }
 
-const CreateBlog = () => {
+const CreateBlog = ({ refresh }: any) => {
+  const router = useRouter()
   const params = useParams();
   const blogId = params?.id;
   const isEditMode = blogId !== "create";
   const [categoryOptions, setCategoryOptions] = useState<CategoryType[]>([]);
   const [content, setContent] = useState("");
-  console.log(content, "content>>>>>>>>>>")
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [blog, setBlog] = useState<any>(null);
-  console.log(blog, "blog>>>>>")
 
   const [inputVal, setInputVal] = useState({
     postTitle: "",
@@ -110,9 +109,11 @@ const CreateBlog = () => {
       if (isEditMode) {
         await axios.patch(`${BaseURL}/blog/update/${blogId}`, formData);
         alert("Blog Updated Successfully ✅");
+        router.push("/admin/blog")
       } else {
         await axios.post(`${BaseURL}/blog`, formData);
         alert("Blog Created Successfully ✅");
+        router.push("/admin/blog")
       }
     } catch (err: any) {
       console.log(err.response?.data || err.message);
